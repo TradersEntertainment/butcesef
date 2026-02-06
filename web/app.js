@@ -2,6 +2,8 @@
 let allPrices = [];
 let allRecipes = [];
 let currentProfile = 'all';
+let personCount = 1;
+let isLuxury = false;
 
 // Selectors
 const calculateBtn = document.getElementById('calculateBtn');
@@ -10,25 +12,24 @@ const resultsArea = document.getElementById('resultsArea');
 const profileBtns = document.querySelectorAll('.profile-btn');
 const statusBadge = document.getElementById('data-status');
 const tickerContent = document.getElementById('tickerContent');
+const personDisplay = document.getElementById('personCount');
+const luxuryToggle = document.getElementById('luxuryToggle');
 
 // Init
 async function init() {
     try {
         await loadData();
         renderTicker();
-        statusBadge.textContent = "Veriler Güncel (Migros)";
+        statusBadge.textContent = "Veriler Güncel (Migros - 07.02)";
         statusBadge.style.color = "green";
         statusBadge.style.backgroundColor = "#dcfce7";
     } catch (e) {
         console.error(e);
         statusBadge.textContent = "Veri Hatası!";
-        statusBadge.style.color = "red";
     }
 }
 
 async function loadData() {
-    // Determine which price file to load. For now, hardcoded to today's mock/real file.
-    // In production, we might fetch 'latest.json'
     const priceRes = await fetch('data/prices_2024_02_07.json');
     const priceData = await priceRes.json();
     allPrices = priceData.products;
@@ -37,80 +38,90 @@ async function loadData() {
     allRecipes = await recipeRes.json();
 }
 
+function updatePerson(delta) {
+    let newVal = personCount + delta;
+    if (newVal < 1) newVal = 1;
+    personCount = newVal;
+    personDisplay.textContent = personCount;
+}
+
+function setBudget(val) {
+    budgetInput.value = val;
+    findMenus();
+}
+
 // Logic: Calculate Recipe Cost
 function calculateRecipeCost(recipe) {
     let totalCost = 0;
-    let missingIngredients = [];
     let breakdown = [];
+    let usedIngredients = JSON.parse(JSON.stringify(recipe.base_ingredients)); // Deep copy
 
-    recipe.ingredients.forEach(ing => {
-        // Find price for this ingredient
-        // Simple fuzzy match: check if price name contains ingredient item name
-        const priceItem = allPrices.find(p => p.name.includes(ing.item) || p.found_title.toLowerCase().includes(ing.item));
+    // Luxury Logic
+    if (isLuxury && recipe.luxury_additions) {
+        recipe.luxury_additions.forEach(lux => {
+            if (lux.replace) {
+                // Replace existing ingredient
+                const idx = usedIngredients.findIndex(i => i.item === lux.replace);
+                if (idx !== -1) usedIngredients[idx] = lux;
+            } else if (lux.add) {
+                // Add new ingredient
+                usedIngredients.push(lux);
+            }
+        });
+    }
+
+    usedIngredients.forEach(ing => {
+        // Find price
+        const priceItem = allPrices.find(p => p.name === ing.item);
+
+        let cost = 0;
+        let brandName = "Bilinmiyor";
 
         if (priceItem) {
-            // Price Logic:
-            // If unit is kg, and we need 0.5 kg -> price * 0.5
-            // If unit is piece (yumurta), price is for 30, we need 2 -> (price/30) * 2
-
-            // Simplifying assumptions for MVP:
-            // We assume the scraper returns a 'base price' and we do quick math provided we know the scraper unit.
-            // But our scraper returns "price" for "unit". 
-            // e.g. Yumurta: 99.50 for "30 adet". Unit cost = 3.31
-
-            let unitCost = 0;
-            // Parse unit from scraper data
-            if (priceItem.unit.includes('30')) unitCost = priceItem.price / 30;
-            else if (priceItem.unit.toLowerCase().includes('kg') || priceItem.unit.toLowerCase().includes('1 l')) {
-                unitCost = priceItem.price; // Per unit (kg or L)
-            }
-            else if (priceItem.unit.includes('500')) {
-                unitCost = priceItem.price * 2; // Normalize to kg
-            }
-            else {
-                unitCost = priceItem.price; // Fallback
-            }
-
-            const ingredientCost = unitCost * ing.qty_algo;
-            totalCost += ingredientCost;
-
-            breakdown.push({
-                name: ing.item,
-                cost: ingredientCost.toFixed(2),
-                display: `${ing.amount} ${ing.unit_type}`
-            });
+            brandName = priceItem.brand || "Market";
+            // Cost = Unit Price * Quantity Needed * Person Count
+            // Data has 'unit_price' pre-calculated per unit (kg/lt/piece)
+            cost = priceItem.unit_price * ing.qty * personCount;
         } else {
-            missingIngredients.push(ing.item);
-            // Penalty cost for missing items (Average assumption)
-            totalCost += 50;
+            cost = 5 * personCount; // Fallback penalty
         }
+
+        totalCost += cost;
+        breakdown.push({
+            name: ing.item,
+            brand: brandName,
+            cost: cost.toFixed(2),
+            amount: `${(ing.qty * personCount).toFixed(2)} ${ing.unit}`
+        });
     });
 
-    return { total: totalCost.toFixed(2), breakdown, missing: missingIngredients };
+    return { total: totalCost.toFixed(2), breakdown };
 }
 
 // Render
 function findMenus() {
-    const budget = parseFloat(budgetInput.value);
+    const budgetPerPerson = parseFloat(budgetInput.value);
+    const totalBudget = budgetPerPerson * personCount;
+
     resultsArea.innerHTML = '';
 
-    // Filter by Profile
+    // Filter Profile
     let filteredRecipes = allRecipes;
     if (currentProfile !== 'all') {
         filteredRecipes = allRecipes.filter(r => r.tags.includes(currentProfile));
     }
 
-    // Calculate Costs and Filter by Budget
+    // Calculate
     const affordableRecipes = filteredRecipes.map(r => {
-        const calculation = calculateRecipeCost(r);
-        return { ...r, cost: calculation.total, details: calculation.breakdown };
-    }).filter(r => parseFloat(r.cost) <= budget);
+        const calc = calculateRecipeCost(r);
+        return { ...r, cost: calc.total, details: calc.breakdown };
+    }).filter(r => parseFloat(r.cost) <= totalBudget); // Check against TOTAL budget
 
     if (affordableRecipes.length === 0) {
         resultsArea.innerHTML = `
             <div class="empty-state">
-                <p>😔 Bu bütçeyle tarif bulamadık.</p>
-                <small>Bütçeyi biraz arttırmayı dene veya "Yumurta" stokla.</small>
+                <p>😔 ${totalBudget} TL bütçeyle ${personCount} kişi zor doyarız...</p>
+                <small>"Lüks" modunu kapatmayı veya bütçeyi arttırmayı dene.</small>
             </div>
         `;
         return;
@@ -120,31 +131,43 @@ function findMenus() {
         const card = document.createElement('div');
         card.className = 'recipe-card';
 
+        // Image Path (assuming in assets folder)
+        const imgSrc = r.image ? `assets/${r.image}` : 'https://via.placeholder.com/400x200?text=Yemek';
+
+        let badge = isLuxury ? '<span class="tag" style="background:gold; color:black">👑 Lüks</span>' : '';
+
         let ingredientsHtml = r.details.map(d => `
             <li class="ing-item">
-                <span>${d.display} ${d.name}</span>
+                <div class="ing-left">
+                    <span class="ing-name">${d.name} <span style="font-weight:normal">(${d.amount})</span></span>
+                    <span class="ing-brand">Marka: ${d.brand}</span>
+                </div>
                 <span class="ing-price">${d.cost} TL</span>
             </li>
         `).join('');
 
         card.innerHTML = `
+            <img src="${imgSrc}" class="card-image" alt="${r.name}">
             <div class="card-header">
-                <div class="card-title">${r.name}</div>
+                <div style="display:flex; justify-content:space-between">
+                    <div class="card-title">${r.name}</div>
+                    ${badge}
+                </div>
                 <div class="card-tags">
                     ${r.tags.map(t => `<span class="tag">#${t}</span>`).join('')}
                 </div>
             </div>
             <div class="card-body">
                 <div class="cost-row">
-                    <span class="cost-label">Tahmini Maliyet</span>
+                    <div style="display:flex; flex-direction:column">
+                         <span class="cost-label">Toplam Maliyet (${personCount} Kişi)</span>
+                         ${isLuxury ? '<span style="font-size:0.7rem; color:goldenrod">Bol Malzemos</span>' : ''}
+                    </div>
                     <span class="total-cost">${r.cost} TL</span>
                 </div>
                 <ul class="ingredients-list">
                     ${ingredientsHtml}
                 </ul>
-                <div style="margin-top:15px; font-size:0.8rem; color:#888;">
-                    * Migros fiyatlarıyla hesaplandı.
-                </div>
             </div>
         `;
         resultsArea.appendChild(card);
@@ -154,21 +177,21 @@ function findMenus() {
 function renderTicker() {
     tickerContent.innerHTML = allPrices.map(p => `
         <div class="price-pill">
-            ${p.name}: <span class="price-val">${p.price} TL</span>
-            ${p.campaign ? '🔥' : ''}
+            <span style="font-weight:bold">${p.brand}</span> ${p.title}: <span class="price-val">${p.price} TL</span>
         </div>
     `).join('');
 }
 
-// Event Listeners
+// Events
 calculateBtn.addEventListener('click', findMenus);
+luxuryToggle.addEventListener('change', (e) => { isLuxury = e.target.checked; findMenus(); });
 
 profileBtns.forEach(btn => {
     btn.addEventListener('click', () => {
         profileBtns.forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
         currentProfile = btn.dataset.profile;
-        findMenus(); // Auto refresh
+        findMenus();
     });
 });
 

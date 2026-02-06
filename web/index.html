@@ -1,13 +1,14 @@
 <!DOCTYPE html>
 <html lang="tr">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>BütçeŞef: Akıllı Mutfak Asistanı</title>
     <link rel="stylesheet" href="style.css">
-    <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
 </head>
+
 <body>
 
     <header class="app-header">
@@ -19,19 +20,47 @@
         <!-- Hero Section: User Input -->
         <section class="planner-box">
             <h1>Bugün ne yiyoruz?</h1>
-            
+
             <div class="profile-selector">
                 <button class="profile-btn active" data-profile="all">Herkes</button>
                 <button class="profile-btn" data-profile="ogrenci">🎓 Öğrenci</button>
                 <button class="profile-btn" data-profile="sporcu">💪 Sporcu</button>
             </div>
 
+            <div class="filters-row">
+                <!-- Person Count -->
+                <div class="filter-group">
+                    <label>Kaç Kişiyiz?</label>
+                    <div class="stepper">
+                        <button onclick="updatePerson(-1)">-</button>
+                        <span id="personCount">1</span>
+                        <button onclick="updatePerson(1)">+</button>
+                    </div>
+                </div>
+
+                <!-- Luxury Toggle -->
+                <div class="filter-group">
+                    <label>Mod:</label>
+                    <label class="toggle-switch">
+                        <input type="checkbox" id="luxuryToggle">
+                        <span class="slider"></span>
+                    </label>
+                    <span class="label-text">Lüks (Bol Malzemos)</span>
+                </div>
+            </div>
+
             <div class="budget-input-group">
-                <label>Cebindeki Para:</label>
+                <label>Kişi Başı Bütçe:</label>
                 <div class="input-wrapper">
-                    <input type="number" id="budgetInput" placeholder="Örn: 100" value="100">
+                    <input type="number" id="budgetInput" placeholder="100" value="100">
                     <span class="currency">TL</span>
                 </div>
+            </div>
+
+            <div class="quick-budgets">
+                <button onclick="setBudget(50)">50 TL</button>
+                <button onclick="setBudget(100)">100 TL</button>
+                <button onclick="setBudget(200)">200 TL</button>
             </div>
 
             <button id="calculateBtn" class="primary-btn">Menü Bul</button>
@@ -56,4 +85,5 @@
 
     <script src="app.js"></script>
 </body>
+
 </html>

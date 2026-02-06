@@ -4,59 +4,109 @@
     "products": [
         {
             "name": "yumurta",
-            "found_title": "Yumurta 30'lu M Boy (53-62 G)",
+            "brand": "Yumurtacım",
+            "title": "M Boy 30'lu",
             "price": 99.50,
-            "original_price": 125.00,
-            "unit": "30 adet",
-            "campaign": "Sepette %20 İndirim"
+            "unit_price": 3.32,
+            "unit": "adet"
         },
         {
             "name": "süt",
-            "found_title": "Tam Yağlı Süt 1 L",
+            "brand": "Migros",
+            "title": "Tam Yağlı Süt 1L",
             "price": 32.50,
-            "original_price": 32.50,
-            "unit": "1 L",
-            "campaign": null
+            "unit_price": 32.50,
+            "unit": "lt"
         },
         {
             "name": "tavuk göğsü",
-            "found_title": "Tavuk Bonfile Kg",
-            "price": 210.00,
-            "original_price": 240.00,
+            "brand": "Banvit",
+            "title": "Piliç Bonfile Kg",
+            "price": 240.00,
+            "unit_price": 240.00,
             "unit": "kg",
             "campaign": "Hemen Al"
         },
         {
+            "name": "pirinç",
+            "brand": "Migros",
+            "title": "Pilavlık Pirinç 1kg",
+            "price": 45.00,
+            "unit_price": 45.00,
+            "unit": "kg"
+        },
+        {
             "name": "makarna",
-            "found_title": "Burgu Makarna 500 G",
+            "brand": "Arbella",
+            "title": "Burgu Makarna 500g",
             "price": 18.50,
-            "original_price": 22.00,
-            "unit": "500 gr",
+            "unit_price": 37.00,
+            "unit": "kg",
             "campaign": "3 Al 2 Öde"
         },
         {
-            "name": "pirinç",
-            "found_title": "Pilavlık Pirinç 1 Kg",
-            "price": 45.00,
-            "original_price": 60.00,
-            "unit": "1 Kg",
-            "campaign": null
-        },
-        {
             "name": "domates",
-            "found_title": "Salkım Domates Kg",
+            "brand": "Manav",
+            "title": "Salkım Domates",
             "price": 35.00,
-            "original_price": 35.00,
-            "unit": "kg",
-            "campaign": null
+            "unit_price": 35.00,
+            "unit": "kg"
         },
         {
             "name": "soğan",
-            "found_title": "Kuru Soğan Kg",
+            "brand": "Manav",
+            "title": "Kuru Soğan",
             "price": 12.50,
-            "original_price": 15.00,
-            "unit": "kg",
-            "campaign": null
+            "unit_price": 12.50,
+            "unit": "kg"
+        },
+        {
+            "name": "sıvı yağ",
+            "brand": "Yudum",
+            "title": "Ayçiçek Yağı 1L",
+            "price": 55.00,
+            "unit_price": 55.00,
+            "unit": "lt"
+        },
+        {
+            "name": "yoğurt",
+            "brand": "Eker",
+            "title": "Kaymaklı Yoğurt 1kg",
+            "price": 85.00,
+            "unit_price": 85.00,
+            "unit": "kg"
+        },
+        {
+            "name": "tereyağı",
+            "brand": "Pınar",
+            "title": "Tereyağı 250g",
+            "price": 120.00,
+            "unit_price": 480.00,
+            "unit": "kg"
+        },
+        {
+            "name": "kaşar peyniri",
+            "brand": "Torku",
+            "title": "Taze Kaşar 400g",
+            "price": 140.00,
+            "unit_price": 350.00,
+            "unit": "kg"
+        },
+        {
+            "name": "ekmek",
+            "brand": "Fırın",
+            "title": "Somun Ekmek",
+            "price": 10.00,
+            "unit_price": 10.00,
+            "unit": "adet"
+        },
+        {
+            "name": "kıyma",
+            "brand": "Uzman Kasap",
+            "title": "Dana Kıyma 400g",
+            "price": 180.00,
+            "unit_price": 450.00,
+            "unit": "kg"
         }
     ]
 }

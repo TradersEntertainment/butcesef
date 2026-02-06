@@ -1,5 +1,5 @@
 :root {
-    --primary: #FF6B00; /* Appetizing Orange */
+    --primary: #FF6B00;
     --surface: #ffffff;
     --bg: #F3F4F6;
     --text: #1F2937;
@@ -8,7 +8,11 @@
     --border-radius: 12px;
 }
 
-* { box-sizing: border-box; margin: 0; padding: 0; }
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
 
 body {
     font-family: 'Inter', sans-serif;
@@ -18,7 +22,7 @@ body {
 }
 
 .container {
-    max-width: 600px; /* Mobile focused max width */
+    max-width: 600px;
     margin: 0 auto;
     padding: 20px;
 }
@@ -29,25 +33,39 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
     position: sticky;
     top: 0;
     z-index: 100;
 }
 
-.logo { font-weight: 800; font-size: 1.2rem; color: var(--primary); }
-.status-badge { font-size: 0.8rem; background: #EEF2FF; color: #4F46E5; padding: 4px 8px; border-radius: 20px; }
+.logo {
+    font-weight: 800;
+    font-size: 1.2rem;
+    color: var(--primary);
+}
+
+.status-badge {
+    font-size: 0.8rem;
+    background: #EEF2FF;
+    color: #4F46E5;
+    padding: 4px 8px;
+    border-radius: 20px;
+}
 
 .planner-box {
     background: var(--surface);
     padding: 25px;
     border-radius: var(--border-radius);
     margin-top: 20px;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.02);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.02);
     text-align: center;
 }
 
-h1 { font-size: 1.5rem; margin-bottom: 20px; }
+h1 {
+    font-size: 1.5rem;
+    margin-bottom: 20px;
+}
 
 .profile-selector {
     display: flex;
@@ -73,8 +91,18 @@ h1 { font-size: 1.5rem; margin-bottom: 20px; }
     border-color: var(--primary);
 }
 
-.budget-input-group { margin-bottom: 20px; }
-.input-wrapper { position: relative; display: inline-block; width: 100%; max-width: 200px; }
+.budget-input-group {
+    margin-bottom: 20px;
+    margin-top: 20px;
+}
+
+.input-wrapper {
+    position: relative;
+    display: inline-block;
+    width: 100%;
+    max-width: 200px;
+}
+
 input[type="number"] {
     width: 100%;
     padding: 12px;
@@ -84,6 +112,7 @@ input[type="number"] {
     text-align: center;
     font-weight: bold;
 }
+
 .currency {
     position: absolute;
     right: 15px;
@@ -105,16 +134,25 @@ input[type="number"] {
     width: 100%;
     transition: transform 0.1s;
 }
-.primary-btn:active { transform: scale(0.98); }
 
-.results-grid { margin-top: 30px; display: grid; gap: 20px; }
+.primary-btn:active {
+    transform: scale(0.98);
+}
+
+.results-grid {
+    margin-top: 30px;
+    display: grid;
+    gap: 20px;
+}
 
 .recipe-card {
     background: var(--surface);
     border-radius: var(--border-radius);
     overflow: hidden;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
     border: 1px solid #f0f0f0;
+    display: flex;
+    flex-direction: column;
 }
 
 .card-header {
@@ -123,35 +161,250 @@ input[type="number"] {
     border-bottom: 1px solid #FFE4E6;
 }
 
-.card-title { font-weight: 700; font-size: 1.1rem; }
-.card-tags { margin-top: 5px; font-size: 0.8rem; color: var(--text-light); }
-.tag { background: white; padding: 2px 6px; border-radius: 4px; border: 1px solid #ddd; margin-right: 5px;}
+.card-title {
+    font-weight: 700;
+    font-size: 1.1rem;
+}
 
-.card-body { padding: 15px; }
+.card-tags {
+    margin-top: 5px;
+    font-size: 0.8rem;
+    color: var(--text-light);
+}
 
-.cost-row { 
-    display: flex; 
-    justify-content: space-between; 
-    align-items: center; 
+.tag {
+    background: white;
+    padding: 2px 6px;
+    border-radius: 4px;
+    border: 1px solid #ddd;
+    margin-right: 5px;
+}
+
+.card-body {
+    padding: 15px;
+}
+
+.cost-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
     margin-bottom: 15px;
 }
 
-.total-cost { font-size: 1.4rem; font-weight: 800; color: var(--success); }
-.cost-label { font-size: 0.8rem; color: var(--text-light); }
-
-.ingredients-list { list-style: none; font-size: 0.9rem; border-top: 1px solid #f3f3f3; padding-top: 10px; }
-.ing-item { display: flex; justify-content: space-between; padding: 4px 0; }
-.ing-price { color: var(--text-light); }
-
-.market-ticker { margin-top: 50px; padding-top: 20px; border-top: 1px solid #e5e5e5; }
-.market-ticker h3 { font-size: 1rem; margin-bottom: 10px; color: var(--text-light); }
-.ticker-scroll { display: flex; gap: 10px; overflow-x: auto; padding-bottom: 10px; }
-.price-pill { 
-    background: white; 
-    padding: 6px 12px; 
-    border-radius: 20px; 
-    border: 1px solid #e5e5e5; 
-    white-space: nowrap; 
-    font-size: 0.8rem; 
+.total-cost {
+    font-size: 1.4rem;
+    font-weight: 800;
+    color: var(--success);
 }
-.price-val { font-weight: bold; color: var(--primary); }
+
+.cost-label {
+    font-size: 0.8rem;
+    color: var(--text-light);
+}
+
+.ingredients-list {
+    list-style: none;
+    font-size: 0.9rem;
+    border-top: 1px solid #f3f3f3;
+    padding-top: 10px;
+}
+
+.market-ticker {
+    margin-top: 50px;
+    padding-top: 20px;
+    border-top: 1px solid #e5e5e5;
+}
+
+.market-ticker h3 {
+    font-size: 1rem;
+    margin-bottom: 10px;
+    color: var(--text-light);
+}
+
+.ticker-scroll {
+    display: flex;
+    gap: 10px;
+    overflow-x: auto;
+    padding-bottom: 10px;
+}
+
+.price-pill {
+    background: white;
+    padding: 6px 12px;
+    border-radius: 20px;
+    border: 1px solid #e5e5e5;
+    white-space: nowrap;
+    font-size: 0.8rem;
+}
+
+.price-val {
+    font-weight: bold;
+    color: var(--primary);
+}
+
+/* New Features */
+.filters-row {
+    display: flex;
+    justify-content: space-around;
+    margin-bottom: 20px;
+    align-items: center;
+    background: #f9fafb;
+    padding: 10px;
+    border-radius: 10px;
+    border: 1px solid #eee;
+}
+
+.filter-group {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #555;
+}
+
+.stepper {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: white;
+    padding: 5px 10px;
+    border-radius: 20px;
+    border: 1px solid #e5e5e5;
+}
+
+.stepper button {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    border: 1px solid #eee;
+    background: #f3f4f6;
+    cursor: pointer;
+    font-weight: bold;
+    color: var(--primary);
+    font-size: 1.2rem;
+    line-height: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.stepper span {
+    font-weight: bold;
+    width: 20px;
+    text-align: center;
+    font-size: 1.1rem;
+}
+
+.toggle-switch {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    cursor: pointer;
+    gap: 10px;
+}
+
+.toggle-switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.slider {
+    position: relative;
+    width: 44px;
+    height: 24px;
+    background-color: #ccc;
+    border-radius: 34px;
+    transition: .4s;
+}
+
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 18px;
+    width: 18px;
+    left: 3px;
+    bottom: 3px;
+    background-color: white;
+    transition: .4s;
+    border-radius: 50%;
+}
+
+input:checked+.slider {
+    background-color: gold;
+}
+
+input:checked+.slider:before {
+    transform: translateX(20px);
+}
+
+.label-text {
+    font-size: 0.8rem;
+    font-weight: normal;
+}
+
+.quick-budgets {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    margin-bottom: 20px;
+}
+
+.quick-budgets button {
+    background: #fee2e2;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 15px;
+    cursor: pointer;
+    color: var(--primary);
+    font-size: 0.85rem;
+    font-weight: 600;
+    transition: 0.2s;
+}
+
+.quick-budgets button:hover {
+    background: var(--primary);
+    color: white;
+}
+
+.card-image {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+}
+
+.ing-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px 0;
+    border-bottom: 1px solid #f9f9f9;
+}
+
+.ing-left {
+    display: flex;
+    flex-direction: column;
+}
+
+.ing-name {
+    font-weight: 600;
+    color: #333;
+}
+
+.ing-brand {
+    font-size: 0.75rem;
+    color: #888;
+    background: #f3f4f6;
+    padding: 1px 6px;
+    border-radius: 4px;
+    width: fit-content;
+    margin-top: 2px;
+}
+
+.ing-price {
+    font-weight: 600;
+    color: #666;
+    font-size: 0.95rem;
+}

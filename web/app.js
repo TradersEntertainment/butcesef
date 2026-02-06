@@ -4,7 +4,7 @@ let allRecipes = [];
 let currentProfile = 'all';
 let personCount = 1;
 let isLuxury = false;
-let activeTab = 'planner'; // 'planner' or 'pantry'
+let activeTab = 'planner';
 
 // Selectors
 const calculateBtn = document.getElementById('calculateBtn');
@@ -19,7 +19,7 @@ const basketModal = document.getElementById('basketModal');
 const basketList = document.getElementById('basketList');
 const basketTotal = document.getElementById('basketTotal');
 const closeBasketBtn = document.getElementById('closeBasket');
-const basketInfo = document.getElementById('basketInfo'); // New for "X times"
+const basketInfo = document.getElementById('basketInfo');
 
 // Tab Logic
 const tabPlanner = document.getElementById('tabPlanner');
@@ -34,22 +34,31 @@ async function init() {
     try {
         await loadData();
         renderTicker();
-        statusBadge.textContent = "Veriler Güncel (Migros - 07.02)";
+        statusBadge.textContent = "✅ Sistem Online";
         statusBadge.style.color = "green";
         statusBadge.style.backgroundColor = "#dcfce7";
     } catch (e) {
-        console.error(e);
-        statusBadge.textContent = "Veri Hatası!";
+        console.error("Init Error:", e);
+        statusBadge.textContent = "❌ Veri Hatası";
+        statusBadge.style.color = "red";
+        statusBadge.style.backgroundColor = "#fee2e2";
+        resultsArea.innerHTML = `<div class="empty-state">Veri yüklenemedi. Lütfen sayfayı yenileyin.</div>`;
     }
 }
 
 async function loadData() {
-    const priceRes = await fetch('data/prices_2024_02_07.json');
-    const priceData = await priceRes.json();
-    allPrices = priceData.products;
+    try {
+        const priceRes = await fetch('data/prices_2024_02_07.json');
+        const priceData = await priceRes.json();
+        allPrices = priceData.products || [];
 
-    const recipeRes = await fetch('data/recipes.json');
-    allRecipes = await recipeRes.json();
+        const recipeRes = await fetch('data/recipes.json');
+        allRecipes = await recipeRes.json() || [];
+
+        console.log(`Loaded ${allPrices.length} prices and ${allRecipes.length} recipes.`);
+    } catch (e) {
+        throw new Error("Failed to load JSON data");
+    }
 }
 
 function updatePerson(delta) {
@@ -57,7 +66,6 @@ function updatePerson(delta) {
     if (newVal < 1) newVal = 1;
     personCount = newVal;
     personDisplay.textContent = personCount;
-    // Re-calculate if results are showing
     if (activeTab === 'planner' && resultsArea.innerHTML !== '') findMenus();
 }
 
@@ -66,171 +74,184 @@ function setBudget(val) {
     findMenus();
 }
 
-// Logic: Calculate Recipe Cost & Yield
 function calculateRecipeCost(recipe) {
-    let totalMealCost = 0;
-    let breakdown = [];
-    let shoppingList = [];
-    let shoppingTotal = 0;
+    try {
+        let totalMealCost = 0;
+        let breakdown = [];
+        let shoppingList = [];
+        let shoppingTotal = 0;
+        let maxYield = 999;
+        let limitingFactor = "";
 
-    // For yield calculation
-    let maxYield = 999;
-    let limitingFactor = "";
+        let usedIngredients = JSON.parse(JSON.stringify(recipe.base_ingredients));
 
-    let usedIngredients = JSON.parse(JSON.stringify(recipe.base_ingredients));
+        if (isLuxury && recipe.luxury_additions) {
+            recipe.luxury_additions.forEach(lux => {
+                if (lux.replace) {
+                    const idx = usedIngredients.findIndex(i => i.item === lux.replace);
+                    if (idx !== -1) usedIngredients[idx] = lux;
+                } else if (lux.add) {
+                    usedIngredients.push(lux);
+                }
+            });
+        }
 
-    // Luxury Logic
-    if (isLuxury && recipe.luxury_additions) {
-        recipe.luxury_additions.forEach(lux => {
-            if (lux.replace) {
-                const idx = usedIngredients.findIndex(i => i.item === lux.replace);
-                if (idx !== -1) usedIngredients[idx] = lux;
-            } else if (lux.add) {
-                usedIngredients.push(lux);
+        usedIngredients.forEach(ing => {
+            // Find Matching Items
+            const matchingItems = allPrices.filter(p => p.name.toLowerCase() === ing.item.toLowerCase());
+            let priceItem = null;
+
+            if (matchingItems.length > 0) {
+                // Safe Sort
+                matchingItems.sort((a, b) => {
+                    const pa = parseFloat(a.unit_price) || 999;
+                    const pb = parseFloat(b.unit_price) || 999;
+                    return pa - pb;
+                });
+                priceItem = matchingItems[0];
             }
+
+            let portionCost = 0;
+            let packageCost = 0;
+            let brandName = "Bilinmiyor";
+            let packageTitle = "Stokta Yok";
+            let boughtAmount = 0;
+
+            const neededQty = parseFloat(ing.qty) * personCount;
+
+            if (priceItem) {
+                brandName = priceItem.brand || "Market";
+                packageTitle = priceItem.title;
+
+                portionCost = (parseFloat(priceItem.unit_price) || 0) * neededQty;
+                const unitPrice = parseFloat(priceItem.price) || 0;
+
+                // Package Logic
+                let packageSize = 1.0;
+                if (priceItem.unit === 'kg' && priceItem.title.includes('500g')) packageSize = 0.5;
+                if (priceItem.unit === 'kg' && priceItem.title.includes('830g')) packageSize = 0.83;
+                if (priceItem.unit === 'kg' && priceItem.title.includes('250g')) packageSize = 0.25;
+                if (priceItem.unit === 'lt' && priceItem.title.includes('200ml')) packageSize = 0.2;
+                if (priceItem.unit === 'adet' && priceItem.title.includes("30")) packageSize = 30;
+
+                let packsNeeded = 1;
+                if (neededQty > packageSize) {
+                    packsNeeded = Math.ceil(neededQty / packageSize);
+                }
+
+                packageCost = unitPrice * packsNeeded;
+                boughtAmount = packageSize * packsNeeded;
+
+                const ingredientYield = neededQty > 0 ? Math.floor(boughtAmount / (ing.qty * personCount)) : 999; // Yield per MEAL (person count specific)
+
+                if (ingredientYield < maxYield) {
+                    maxYield = ingredientYield;
+                    limitingFactor = ing.item;
+                }
+
+            } else {
+                portionCost = 10 * personCount; // Fallback penalty
+            }
+
+            totalMealCost += portionCost;
+            if (priceItem) shoppingTotal += packageCost;
+
+            breakdown.push({
+                name: ing.item,
+                brand: brandName,
+                cost: portionCost.toFixed(2),
+                amount: `${neededQty.toFixed(2)} ${ing.unit}`
+            });
+
+            shoppingList.push({
+                title: packageTitle,
+                brand: brandName,
+                price: packageCost,
+                needed: neededQty,
+                unit: ing.unit
+            });
         });
+
+        return {
+            mealTotal: totalMealCost.toFixed(2),
+            shoppingTotal: shoppingTotal.toFixed(2),
+            breakdown,
+            shoppingList,
+            yieldInfo: { count: maxYield, limit: limitingFactor }
+        };
+    } catch (err) {
+        console.error("Calc Error:", err);
+        return { mealTotal: "0.00", shoppingTotal: "0.00", breakdown: [], shoppingList: [], yieldInfo: {} };
     }
-
-    usedIngredients.forEach(ing => {
-        // Find ALL matching price items and sort cheapest
-        const matchingItems = allPrices.filter(p => p.name === ing.item);
-        let priceItem = null;
-
-        if (matchingItems.length > 0) {
-            matchingItems.sort((a, b) => a.unit_price - b.unit_price);
-            priceItem = matchingItems[0];
-        }
-
-        let portionCost = 0;
-        let packageCost = 0;
-        let brandName = "Bilinmiyor";
-        let packageTitle = "Bulunamadı";
-        let boughtAmount = 0; // in recipe units (usually kg/lt)
-
-        const neededQty = ing.qty * personCount;
-
-        if (priceItem) {
-            brandName = priceItem.brand || "Market";
-            packageTitle = priceItem.title;
-
-            portionCost = priceItem.unit_price * neededQty;
-
-            // Shopping Logic & Size Parsing
-            let packageSize = 1.0;
-            // Normalized to KG/LT/Adet
-            if (priceItem.unit === 'kg' && priceItem.title.includes('500g')) packageSize = 0.5;
-            if (priceItem.unit === 'kg' && priceItem.title.includes('830g')) packageSize = 0.83;
-            if (priceItem.unit === 'kg' && priceItem.title.includes('250g')) packageSize = 0.25;
-            if (priceItem.unit === 'lt' && priceItem.title.includes('200ml')) packageSize = 0.2;
-            if (priceItem.unit === 'adet' && priceItem.title.includes("30")) packageSize = 30;
-
-            // Logic: Buy enough packages
-            let packsNeeded = 1;
-            if (neededQty > packageSize) {
-                packsNeeded = Math.ceil(neededQty / packageSize);
-            }
-            packageCost = priceItem.price * packsNeeded;
-            boughtAmount = packageSize * packsNeeded;
-
-            // Yield Logic
-            // How many times can we cook 'ing.qty' (base per person recipe amounts) with 'boughtAmount'?
-            // Actually, yield should be "How many MEALS for THIS person count?"
-            // Meal Needs: neededQty. Bought: boughtAmount.
-            const ingredientYield = Math.floor(boughtAmount / neededQty);
-            if (ingredientYield < maxYield) {
-                maxYield = ingredientYield;
-                limitingFactor = ing.item;
-            }
-
-        } else {
-            portionCost = 5 * personCount;
-            // logic fail fallback
-            boughtAmount = neededQty;
-        }
-
-        totalMealCost += portionCost;
-        if (priceItem) shoppingTotal += packageCost;
-
-        breakdown.push({
-            name: ing.item,
-            brand: brandName,
-            cost: portionCost.toFixed(2),
-            amount: `${neededQty.toFixed(2)} ${ing.unit}`
-        });
-
-        shoppingList.push({
-            title: packageTitle,
-            brand: brandName,
-            price: packageCost,
-            needed: neededQty,
-            unit: ing.unit
-        });
-    });
-
-    return {
-        mealTotal: totalMealCost.toFixed(2),
-        shoppingTotal: shoppingTotal.toFixed(2),
-        breakdown,
-        shoppingList,
-        yieldInfo: { count: maxYield, limit: limitingFactor }
-    };
 }
 
 let currentAffordableRecipes = [];
 
-// Render Planner
 function findMenus() {
     activeTab = 'planner';
-    const budgetPerPerson = parseFloat(budgetInput.value);
-    const totalBudget = budgetPerPerson * personCount;
+    try {
+        const budgetVal = parseFloat(budgetInput.value);
+        if (isNaN(budgetVal)) {
+            alert("Lütfen geçerli bir bütçe girin.");
+            return;
+        }
 
-    resultsArea.innerHTML = '';
+        const totalBudget = budgetVal * personCount;
+        resultsArea.innerHTML = '';
 
-    let filteredRecipes = allRecipes;
-    if (currentProfile !== 'all') {
-        filteredRecipes = allRecipes.filter(r => r.tags.includes(currentProfile));
+        let filteredRecipes = allRecipes;
+        if (currentProfile !== 'all') {
+            filteredRecipes = allRecipes.filter(r => r.tags.includes(currentProfile));
+        }
+
+        currentAffordableRecipes = filteredRecipes.map(r => {
+            const calc = calculateRecipeCost(r);
+            return { ...r, ...calc };
+        }).filter(r => parseFloat(r.mealTotal) <= totalBudget);
+
+        // Sorting: cheapest first
+        currentAffordableRecipes.sort((a, b) => parseFloat(a.mealTotal) - parseFloat(b.mealTotal));
+
+        if (currentAffordableRecipes.length === 0) {
+            resultsArea.innerHTML = `
+                <div class="empty-state">
+                    <p>😔 ${totalBudget.toFixed(2)} TL bütçeyle ${personCount} kişi zor doyarız...</p>
+                    <small>Bütçeyi arttırmayı dene veya Lüks modunu kapat.</small>
+                </div>
+            `;
+            return;
+        }
+
+        currentAffordableRecipes.forEach((r, index) => {
+            renderCard(r, index);
+        });
+    } catch (e) {
+        console.error("FindMenus Error:", e);
+        resultsArea.innerHTML = `<div class="empty-state">Hesaplama hatası oldu. 🛠️</div>`;
     }
-
-    currentAffordableRecipes = filteredRecipes.map(r => {
-        const calc = calculateRecipeCost(r);
-        return { ...r, ...calc };
-    }).filter(r => parseFloat(r.mealTotal) <= totalBudget);
-
-    if (currentAffordableRecipes.length === 0) {
-        resultsArea.innerHTML = `
-            <div class="empty-state">
-                <p>😔 ${totalBudget} TL bütçeyle ${personCount} kişi zor doyarız...</p>
-                <small>Bütçeyi arttırmayı dene.</small>
-            </div>
-        `;
-        return;
-    }
-
-    currentAffordableRecipes.forEach((r, index) => {
-        renderCard(r, index);
-    });
 }
 
-// Logic: Pantry Search
 function searchPantry() {
     activeTab = 'pantry';
     const input = pantryInput.value.toLowerCase();
-    if (!input) return;
+    if (!input) {
+        resultsArea.innerHTML = `<div class="empty-state">Lütfen malzeme girin.</div>`;
+        return;
+    }
 
     const userIngredients = input.split(',').map(i => i.trim());
     resultsArea.innerHTML = '';
+    currentAffordableRecipes = [];
 
-    // Score recipes based on match
     const scoredRecipes = allRecipes.map(r => {
         const rIngredients = r.base_ingredients.map(i => i.item.toLowerCase());
         const matchCount = rIngredients.filter(i =>
-            userIngredients.some(ui => i.includes(ui) || ui.includes(i))
+            userIngredients.some(ui => ui.length > 2 && i.includes(ui))
         ).length;
 
         return { ...r, matchScore: matchCount, totalIng: rIngredients.length };
     }).filter(r => r.matchScore > 0);
 
-    // Sort by best match
     scoredRecipes.sort((a, b) => b.matchScore - a.matchScore);
 
     if (scoredRecipes.length === 0) {
@@ -238,12 +259,10 @@ function searchPantry() {
         return;
     }
 
-    // Render with missing info
     scoredRecipes.forEach(r => {
-        // Calculate cost normally for display
         const calc = calculateRecipeCost(r);
         const cardData = { ...r, ...calc, isPantry: true };
-        currentAffordableRecipes.push(cardData); // store for basket functionality
+        currentAffordableRecipes.push(cardData);
         renderCard(cardData, currentAffordableRecipes.length - 1);
     });
 }
@@ -284,7 +303,6 @@ function renderCard(r, index) {
                 </div>
                 <span class="total-cost">${r.mealTotal} TL</span>
             </div>
-            <!-- Basket Button -->
             <button class="basket-btn" onclick="openBasket(${index})">
                 🛒 Sepet Oluştur (Kasada: ${r.shoppingTotal} TL)
             </button>
@@ -297,17 +315,6 @@ function renderCard(r, index) {
 }
 
 function openBasket(index) {
-    // Note: currentAffordableRecipes might contain mix of pantry and planner depending on state
-    // But since we clear array on search, it should be fine.
-    // Wait, on pantry search I append... that might be buggy if switching tabs properly? 
-    // Let's rely on 'index' being correct for the currently rendered set.
-    // Actually, on render I should probably reset currentAffordableRecipes or handle it better.
-    // For MVP: on findMenus() it maps. On searchPantry() it maps.
-    // Re-mapping inside searchPantry fixes it.
-
-    // Quick fix: ensure currentAffordableRecipes is valid when used.
-    // Currently renderCard uses the index pushed.
-
     const recipe = currentAffordableRecipes[index];
     basketList.innerHTML = '';
 
@@ -326,7 +333,6 @@ function openBasket(index) {
 
     basketTotal.textContent = `${recipe.shoppingTotal} TL`;
 
-    // Yield Info
     if (recipe.yieldInfo) {
         basketInfo.innerHTML = `
             <p>💡 <b>Verimlilik:</b> Bu alışverişle bu yemeği tam <b>${recipe.yieldInfo.count} kere</b> yapabilirsin!</p>
@@ -338,6 +344,7 @@ function openBasket(index) {
 }
 
 function renderTicker() {
+    if (!allPrices.length) return;
     tickerContent.innerHTML = allPrices.map(p => `
         <div class="price-pill">
             <span style="font-weight:bold">${p.brand}</span> ${p.title}: <span class="price-val">${p.price} TL</span>
@@ -345,28 +352,31 @@ function renderTicker() {
     `).join('');
 }
 
-// Tabs
-tabPlanner.addEventListener('click', () => {
-    tabPlanner.classList.add('active');
-    tabPantry.classList.remove('active');
-    sectionPlanner.style.display = 'block';
-    sectionPantry.style.display = 'none';
-});
+// Logic: Use correct 'closest' tab selector or IDs
+if (tabPlanner) {
+    tabPlanner.addEventListener('click', () => {
+        tabPlanner.classList.add('active');
+        tabPantry.classList.remove('active');
+        sectionPlanner.style.display = 'block';
+        sectionPantry.style.display = 'none';
+    });
+}
 
-tabPantry.addEventListener('click', () => {
-    tabPantry.classList.add('active');
-    tabPlanner.classList.remove('active');
-    sectionPlanner.style.display = 'none';
-    sectionPantry.style.display = 'block';
-});
+if (tabPantry) {
+    tabPantry.addEventListener('click', () => {
+        tabPantry.classList.add('active');
+        tabPlanner.classList.remove('active');
+        sectionPlanner.style.display = 'none';
+        sectionPantry.style.display = 'block';
+    });
+}
 
-// Events
-calculateBtn.addEventListener('click', findMenus);
-pantrySearchBtn.addEventListener('click', () => {
-    currentAffordableRecipes = []; // Reset for accurate indexing
+if (calculateBtn) calculateBtn.addEventListener('click', findMenus);
+if (pantrySearchBtn) pantrySearchBtn.addEventListener('click', () => {
+    currentAffordableRecipes = [];
     searchPantry();
 });
-luxuryToggle.addEventListener('change', (e) => { isLuxury = e.target.checked; findMenus(); });
+if (luxuryToggle) luxuryToggle.addEventListener('change', (e) => { isLuxury = e.target.checked; findMenus(); });
 
 profileBtns.forEach(btn => {
     btn.addEventListener('click', () => {
@@ -377,7 +387,7 @@ profileBtns.forEach(btn => {
     });
 });
 
-closeBasketBtn.addEventListener('click', () => {
+if (closeBasketBtn) closeBasketBtn.addEventListener('click', () => {
     basketModal.style.display = 'none';
 });
 
@@ -385,6 +395,13 @@ window.onclick = function (event) {
     if (event.target == basketModal) {
         basketModal.style.display = "none";
     }
+}
+
+// Enter key support for budget
+if (budgetInput) {
+    budgetInput.addEventListener('keypress', function (e) {
+        if (e.key === 'Enter') findMenus();
+    });
 }
 
 init();

@@ -32,8 +32,7 @@
             "title": "Piliç Bonfile Kg",
             "price": 240.00,
             "unit_price": 240.00,
-            "unit": "kg",
-            "campaign": "Hemen Al"
+            "unit": "kg"
         },
         {
             "name": "tavuk göğsü",
@@ -73,8 +72,7 @@
             "title": "Burgu Makarna 500g",
             "price": 18.50,
             "unit_price": 37.00,
-            "unit": "kg",
-            "campaign": "3 Al 2 Öde"
+            "unit": "kg"
         },
         {
             "name": "domates",

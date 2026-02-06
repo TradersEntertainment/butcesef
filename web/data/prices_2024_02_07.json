@@ -107,6 +107,38 @@
             "price": 180.00,
             "unit_price": 450.00,
             "unit": "kg"
+        },
+        {
+            "name": "kuru fasulye",
+            "brand": "Yayla",
+            "title": "Dermason Fasulye 1kg",
+            "price": 65.00,
+            "unit_price": 65.00,
+            "unit": "kg"
+        },
+        {
+            "name": "salça",
+            "brand": "Tat",
+            "title": "Domates Salçası 830g",
+            "price": 45.00,
+            "unit_price": 54.21,
+            "unit": "kg"
+        },
+        {
+            "name": "patates",
+            "brand": "Manav",
+            "title": "Patates Kg",
+            "price": 18.00,
+            "unit_price": 18.00,
+            "unit": "kg"
+        },
+        {
+            "name": "ayran",
+            "brand": "Sütaş",
+            "title": "Ayran 200ml",
+            "price": 8.50,
+            "unit_price": 8.50,
+            "unit": "adet"
         }
     ]
 }

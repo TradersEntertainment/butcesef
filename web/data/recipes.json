@@ -2,7 +2,7 @@
     {
         "id": "menemen",
         "name": "Menemen",
-        "image": "menemen_presentation.png",
+        "image": "https://images.unsplash.com/photo-1525351484164-983058b185e8?w=800&q=80",
         "description": "Öğrencilerin vazgeçilmezi, kahvaltıların kralı.",
         "tags": [
             "ogrenci",
@@ -62,7 +62,7 @@
     {
         "id": "tavuk_pilav",
         "name": "Tavuklu Pilav",
-        "image": "chicken_rice_plate.png",
+        "image": "https://images.unsplash.com/photo-1604908176997-125f25cc6f3d?w=800&q=80",
         "description": "Sporcu dostu, yüksek protein, temiz karbonhidrat.",
         "tags": [
             "sporcu",
@@ -115,8 +115,8 @@
     },
     {
         "id": "makarna",
-        "name": "Salçalı Makarna",
-        "image": "pasta_dish.png",
+        "name": "Bol Soslu Makarna",
+        "image": "https://images.unsplash.com/photo-1608835291093-394b0c943a75?w=800&q=80",
         "description": "Ay sonunu getiren efsane lezzet.",
         "tags": [
             "ogrenci",
@@ -131,10 +131,10 @@
                 "qty": 0.25
             },
             {
-                "item": "domates",
-                "amount": 0.2,
+                "item": "salça",
+                "amount": 0.05,
                 "unit": "kg",
-                "qty": 0.2
+                "qty": 0.05
             },
             {
                 "item": "sıvı yağ",
@@ -160,5 +160,118 @@
             }
         ],
         "prep_time": 20
+    },
+    {
+        "id": "kuru_fasulye",
+        "name": "Kuru Fasulye & Pilav",
+        "image": "https://images.unsplash.com/photo-1633455171732-26338b55580a?w=800&q=80",
+        "description": "Milli yemeğimiz. Tam bir protein ve lif deposu.",
+        "tags": [
+            "geleneksel",
+            "aksam",
+            "doyurucu"
+        ],
+        "base_ingredients": [
+            {
+                "item": "kuru fasulye",
+                "amount": 0.15,
+                "unit": "kg",
+                "qty": 0.15
+            },
+            {
+                "item": "pirinç",
+                "amount": 0.1,
+                "unit": "kg",
+                "qty": 0.1
+            },
+            {
+                "item": "salça",
+                "amount": 0.05,
+                "unit": "kg",
+                "qty": 0.05
+            },
+            {
+                "item": "soğan",
+                "amount": 0.1,
+                "unit": "kg",
+                "qty": 0.1
+            },
+            {
+                "item": "sıvı yağ",
+                "amount": 0.05,
+                "unit": "lt",
+                "qty": 0.05
+            }
+        ],
+        "luxury_additions": [
+            {
+                "item": "kıyma",
+                "amount": 0.1,
+                "unit": "kg",
+                "qty": 0.1,
+                "add": true
+            },
+            {
+                "item": "tereyağı",
+                "amount": 0.05,
+                "unit": "kg",
+                "qty": 0.05,
+                "replace": "sıvı yağ"
+            }
+        ],
+        "prep_time": 60
+    },
+    {
+        "id": "kofte_patates",
+        "name": "Köfte Patates",
+        "image": "https://images.unsplash.com/photo-1529042410759-befb1204b468?w=800&q=80",
+        "description": "Anne eli değmiş gibi. Kızartma sevenlere.",
+        "tags": [
+            "aksam",
+            "cocuk",
+            "ziyafet"
+        ],
+        "base_ingredients": [
+            {
+                "item": "kıyma",
+                "amount": 0.2,
+                "unit": "kg",
+                "qty": 0.2
+            },
+            {
+                "item": "patates",
+                "amount": 0.3,
+                "unit": "kg",
+                "qty": 0.3
+            },
+            {
+                "item": "ekmek",
+                "amount": 0.2,
+                "unit": "adet",
+                "qty": 0.2
+            },
+            {
+                "item": "sıvı yağ",
+                "amount": 0.1,
+                "unit": "lt",
+                "qty": 0.1
+            },
+            {
+                "item": "soğan",
+                "amount": 0.05,
+                "unit": "kg",
+                "qty": 0.05
+            }
+        ],
+        "luxury_additions": [
+            {
+                "item": "ayran",
+                "amount": 1,
+                "unit": "adet",
+                "qty": 1,
+                "add": true
+            }
+        ],
+        "prep_time": 45
     }
 ]

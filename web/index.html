@@ -83,6 +83,29 @@
         </section>
     </main>
 
+    <!-- Shopping Basket Modal -->
+    <div id="basketModal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" id="closeBasket">&times;</span>
+            <h2>🛍️ Alışveriş Listesi</h2>
+            <p style="color:#666; font-size:0.9rem; margin-bottom:15px;">Evde hiç malzemeniz olmadığını varsayarak, en
+                uygun paketleri seçtik:</p>
+
+            <ul id="basketList" class="basket-list">
+                <!-- Items injected here -->
+            </ul>
+
+            <div class="basket-footer">
+                <div class="basket-total-row">
+                    <span>Kasa Toplamı:</span>
+                    <span id="basketTotal" style="color:var(--primary); font-size:1.5rem;">0 TL</span>
+                </div>
+                <button class="primary-btn" onclick="alert('Migros Sanal Market entegrasyonu yakında!')">Markete Git &
+                    Al</button>
+            </div>
+        </div>
+    </div>
+
     <script src="app.js"></script>
 </body>
 

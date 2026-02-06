@@ -1,0 +1,62 @@
+{
+    "date": "2024-02-07",
+    "market": "Migros",
+    "products": [
+        {
+            "name": "yumurta",
+            "found_title": "Yumurta 30'lu M Boy (53-62 G)",
+            "price": 99.50,
+            "original_price": 125.00,
+            "unit": "30 adet",
+            "campaign": "Sepette %20 İndirim"
+        },
+        {
+            "name": "süt",
+            "found_title": "Tam Yağlı Süt 1 L",
+            "price": 32.50,
+            "original_price": 32.50,
+            "unit": "1 L",
+            "campaign": null
+        },
+        {
+            "name": "tavuk göğsü",
+            "found_title": "Tavuk Bonfile Kg",
+            "price": 210.00,
+            "original_price": 240.00,
+            "unit": "kg",
+            "campaign": "Hemen Al"
+        },
+        {
+            "name": "makarna",
+            "found_title": "Burgu Makarna 500 G",
+            "price": 18.50,
+            "original_price": 22.00,
+            "unit": "500 gr",
+            "campaign": "3 Al 2 Öde"
+        },
+        {
+            "name": "pirinç",
+            "found_title": "Pilavlık Pirinç 1 Kg",
+            "price": 45.00,
+            "original_price": 60.00,
+            "unit": "1 Kg",
+            "campaign": null
+        },
+        {
+            "name": "domates",
+            "found_title": "Salkım Domates Kg",
+            "price": 35.00,
+            "original_price": 35.00,
+            "unit": "kg",
+            "campaign": null
+        },
+        {
+            "name": "soğan",
+            "found_title": "Kuru Soğan Kg",
+            "price": 12.50,
+            "original_price": 15.00,
+            "unit": "kg",
+            "campaign": null
+        }
+    ]
+}

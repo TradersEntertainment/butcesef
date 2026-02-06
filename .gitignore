@@ -1,0 +1,7 @@
+__pycache__/
+*.pyc
+node_modules/
+.env
+.vscode/
+scraper/geckodriver.log
+scraper/debug_*.html

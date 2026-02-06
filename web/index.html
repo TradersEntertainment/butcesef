@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BütçeŞef: Akıllı Mutfak Asistanı</title>
+    <link rel="stylesheet" href="style.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <header class="app-header">
+        <div class="logo">🍳 BütçeŞef</div>
+        <div class="status-badge" id="data-status">Veri Kontrol ediliyor...</div>
+    </header>
+
+    <main class="container">
+        <!-- Hero Section: User Input -->
+        <section class="planner-box">
+            <h1>Bugün ne yiyoruz?</h1>
+            
+            <div class="profile-selector">
+                <button class="profile-btn active" data-profile="all">Herkes</button>
+                <button class="profile-btn" data-profile="ogrenci">🎓 Öğrenci</button>
+                <button class="profile-btn" data-profile="sporcu">💪 Sporcu</button>
+            </div>
+
+            <div class="budget-input-group">
+                <label>Cebindeki Para:</label>
+                <div class="input-wrapper">
+                    <input type="number" id="budgetInput" placeholder="Örn: 100" value="100">
+                    <span class="currency">TL</span>
+                </div>
+            </div>
+
+            <button id="calculateBtn" class="primary-btn">Menü Bul</button>
+        </section>
+
+        <!-- Results Section -->
+        <section id="resultsArea" class="results-grid">
+            <!-- Cards will be injected here by JS -->
+            <div class="empty-state">
+                <p>Bütçeni gir, sana en uygun kral sofrayı kuralım.</p>
+            </div>
+        </section>
+
+        <!-- Market Prices Debug Ticker -->
+        <section class="market-ticker">
+            <h3>Güncel Market Fiyatları (Migros)</h3>
+            <div id="tickerContent" class="ticker-scroll">
+                <!-- Prices scroll here -->
+            </div>
+        </section>
+    </main>
+
+    <script src="app.js"></script>
+</body>
+</html>

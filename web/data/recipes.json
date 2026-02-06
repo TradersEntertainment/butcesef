@@ -1,0 +1,110 @@
+[
+    {
+        "id": "menemen_eko",
+        "name": "Ekonomik Menemen",
+        "description": "Öğrencilerin vazgeçilmezi. Hızlı ve doyurucu.",
+        "tags": [
+            "ogrenci",
+            "kahvalti",
+            "hizli"
+        ],
+        "ingredients": [
+            {
+                "item": "yumurta",
+                "amount": 2,
+                "unit_type": "piece",
+                "qty_algo": 2
+            },
+            {
+                "item": "domates",
+                "amount": 0.3,
+                "unit_type": "kg",
+                "qty_algo": 0.3
+            },
+            {
+                "item": "soğan",
+                "amount": 0.1,
+                "unit_type": "kg",
+                "qty_algo": 0.1
+            },
+            {
+                "item": "sıvı yağ",
+                "amount": 0.05,
+                "unit_type": "liter",
+                "qty_algo": 0.05
+            }
+        ],
+        "prep_time": 15,
+        "servings": 1
+    },
+    {
+        "id": "tavuk_pilav",
+        "name": "Sporcu Dostu Tavuk Pilav",
+        "description": "Yüksek protein, temiz karbonhidrat.",
+        "tags": [
+            "sporcu",
+            "aksam",
+            "protein"
+        ],
+        "ingredients": [
+            {
+                "item": "tavuk göğsü",
+                "amount": 0.2,
+                "unit_type": "kg",
+                "qty_algo": 0.2
+            },
+            {
+                "item": "pirinç",
+                "amount": 0.1,
+                "unit_type": "kg",
+                "qty_algo": 0.1
+            },
+            {
+                "item": "sıvı yağ",
+                "amount": 0.02,
+                "unit_type": "liter",
+                "qty_algo": 0.02
+            },
+            {
+                "item": "yoğurt",
+                "amount": 0.1,
+                "unit_type": "kg",
+                "qty_algo": 0.1
+            }
+        ],
+        "prep_time": 30,
+        "servings": 1
+    },
+    {
+        "id": "makarna_soslu",
+        "name": "Bol Soslu Makarna",
+        "description": "Ay sonunu getiren efsane lezzet.",
+        "tags": [
+            "ogrenci",
+            "aksam",
+            "ucuz"
+        ],
+        "ingredients": [
+            {
+                "item": "makarna",
+                "amount": 0.25,
+                "unit_type": "pack_ratio",
+                "qty_algo": 0.25
+            },
+            {
+                "item": "domates",
+                "amount": 0.2,
+                "unit_type": "kg",
+                "qty_algo": 0.2
+            },
+            {
+                "item": "sıvı yağ",
+                "amount": 0.03,
+                "unit_type": "liter",
+                "qty_algo": 0.03
+            }
+        ],
+        "prep_time": 20,
+        "servings": 1
+    }
+]

@@ -19,6 +19,14 @@
             "unit": "lt"
         },
         {
+            "name": "süt",
+            "brand": "İçim",
+            "title": "Süt 1L",
+            "price": 38.00,
+            "unit_price": 38.00,
+            "unit": "lt"
+        },
+        {
             "name": "tavuk göğsü",
             "brand": "Banvit",
             "title": "Piliç Bonfile Kg",
@@ -28,11 +36,35 @@
             "campaign": "Hemen Al"
         },
         {
+            "name": "tavuk göğsü",
+            "brand": "Migros",
+            "title": "Piliç Bonfile Kg",
+            "price": 210.00,
+            "unit_price": 210.00,
+            "unit": "kg"
+        },
+        {
             "name": "pirinç",
             "brand": "Migros",
             "title": "Pilavlık Pirinç 1kg",
             "price": 45.00,
             "unit_price": 45.00,
+            "unit": "kg"
+        },
+        {
+            "name": "pirinç",
+            "brand": "Yayla",
+            "title": "Osmancık Pirinç 2kg",
+            "price": 140.00,
+            "unit_price": 70.00,
+            "unit": "kg"
+        },
+        {
+            "name": "makarna",
+            "brand": "Migros",
+            "title": "Burgu Makarna 500g",
+            "price": 11.50,
+            "unit_price": 23.00,
             "unit": "kg"
         },
         {
@@ -62,11 +94,27 @@
         },
         {
             "name": "sıvı yağ",
+            "brand": "Migros",
+            "title": "Ayçiçek Yağı 1L",
+            "price": 48.50,
+            "unit_price": 48.50,
+            "unit": "lt"
+        },
+        {
+            "name": "sıvı yağ",
             "brand": "Yudum",
             "title": "Ayçiçek Yağı 1L",
             "price": 55.00,
             "unit_price": 55.00,
             "unit": "lt"
+        },
+        {
+            "name": "yoğurt",
+            "brand": "Migros",
+            "title": "Kaymaklı Yoğurt 1.5kg",
+            "price": 65.00,
+            "unit_price": 43.33,
+            "unit": "kg"
         },
         {
             "name": "yoğurt",
@@ -78,10 +126,26 @@
         },
         {
             "name": "tereyağı",
+            "brand": "Migros",
+            "title": "Tereyağı 250g",
+            "price": 95.00,
+            "unit_price": 380.00,
+            "unit": "kg"
+        },
+        {
+            "name": "tereyağı",
             "brand": "Pınar",
             "title": "Tereyağı 250g",
             "price": 120.00,
             "unit_price": 480.00,
+            "unit": "kg"
+        },
+        {
+            "name": "kaşar peyniri",
+            "brand": "Migros",
+            "title": "Taze Kaşar 400g",
+            "price": 110.00,
+            "unit_price": 275.00,
             "unit": "kg"
         },
         {
@@ -110,10 +174,26 @@
         },
         {
             "name": "kuru fasulye",
+            "brand": "Migros",
+            "title": "Dermason Fasulye 1kg",
+            "price": 55.00,
+            "unit_price": 55.00,
+            "unit": "kg"
+        },
+        {
+            "name": "kuru fasulye",
             "brand": "Yayla",
             "title": "Dermason Fasulye 1kg",
             "price": 65.00,
             "unit_price": 65.00,
+            "unit": "kg"
+        },
+        {
+            "name": "salça",
+            "brand": "Migros",
+            "title": "Domates Salçası 830g",
+            "price": 34.50,
+            "unit_price": 41.56,
             "unit": "kg"
         },
         {
@@ -131,6 +211,14 @@
             "price": 18.00,
             "unit_price": 18.00,
             "unit": "kg"
+        },
+        {
+            "name": "ayran",
+            "brand": "Migros",
+            "title": "Ayran 200ml",
+            "price": 4.50,
+            "unit_price": 4.50,
+            "unit": "adet"
         },
         {
             "name": "ayran",

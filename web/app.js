@@ -76,8 +76,27 @@ function calculateRecipeCost(recipe) {
     }
 
     usedIngredients.forEach(ing => {
-        // Find price
-        const priceItem = allPrices.find(p => p.name === ing.item);
+        // Find ALL matching price items
+        const matchingItems = allPrices.filter(p => p.name === ing.item);
+
+        let priceItem = null;
+
+        if (matchingItems.length > 0) {
+            // Sort by Unit Price (Cheapest First)
+            matchingItems.sort((a, b) => a.unit_price - b.unit_price);
+
+            if (isLuxury && matchingItems.length > 1) {
+                // For luxury mode, maybe pick the most expensive or a specific premium brand?
+                // For now, let's stick to base logic: Luxury Toggle changes *Ingredients* (Butter instad of Oil), 
+                // but we still want the best price for Butter unless specified.
+                // Let's keep cheapest default, but if user wants "Premium Brand" that's a differnt feature.
+                // Actually, let's pick the 2nd cheapest or expensive one if luxury is ON? 
+                // No, Luxury changes the MATERIAL (Butter vs Oil). Keep brand cheap to save money for better materials.
+                priceItem = matchingItems[0];
+            } else {
+                priceItem = matchingItems[0]; // Cheapest
+            }
+        }
 
         let portionCost = 0;
         let packageCost = 0;
@@ -93,36 +112,24 @@ function calculateRecipeCost(recipe) {
             // Portion Cost
             portionCost = priceItem.unit_price * neededQty;
 
-            // Shopping Logic: You buy the WHOLE package
-            // But if you need 2.5kg and package is 1kg, you buy 3 packages.
-
-            // Determine package size from unit (Approximation)
+            // Shopping Logic
             let packageSize = 1.0;
-            if (priceItem.title.includes('500g')) packageSize = 0.5;
-            if (priceItem.title.includes('250g')) packageSize = 0.25;
-            if (priceItem.title.includes('30')) packageSize = 30; // eggs
-            if (priceItem.title.includes('200ml')) packageSize = 0.2; // ayran
-            if (priceItem.title.includes('830g')) packageSize = 0.83; // salca
+            // Heuristic size parsing
+            if (priceItem.unit === 'kg' && priceItem.title.includes('500g')) packageSize = 0.5;
+            if (priceItem.unit === 'kg' && priceItem.title.includes('250g')) packageSize = 0.25;
+            if (priceItem.unit === 'lt' && priceItem.title.includes('200ml')) packageSize = 0.2;
 
-            // Units check:
-            // Data has 'unit_price' which is per KG or per Adet.
-            // But 'price' is the package price.
+            // Allow integer items
+            if (priceItem.unit === 'adet' && priceItem.title.includes("30")) packageSize = 30;
 
-            // If unit is 'adet' (eggs, bread), neededQty is items.
-            // If unit is 'kg'/'lt', neededQty is weight/volume.
-
-            // How many packages needed?
-            // E.g. Needed 0.3kg. Package is 1kg. -> 1 Package.
-            // E.g. Needed 2 eggs. Package is 30 eggs. -> 1 Package.
-
-            // Hack for simplicity:
-            // Just assume 1 package is enough unless needed qty > package size (logic for v2)
-            // For now, if you need ANY amount, you buy the whole package.
+            // Simplistic: 1 package minimum.
             packageCost = priceItem.price;
 
-            // Simple Multiplier check for heavy eaters
-            if (priceItem.unit === 'kg' && neededQty > 1) packageCost = priceItem.price * Math.ceil(neededQty);
-            if (priceItem.unit === 'g' && neededQty > packageSize) packageCost = priceItem.price * Math.ceil(neededQty / packageSize);
+            // For bulk (e.g. 5kg rice needed, package is 1kg), mulitply
+            if (neededQty > packageSize && priceItem.unit !== 'adet') {
+                const packsNeeded = Math.ceil(neededQty / packageSize);
+                packageCost = priceItem.price * packsNeeded;
+            }
 
         } else {
             portionCost = 5 * personCount;
@@ -172,7 +179,7 @@ function findMenus() {
     currentAffordableRecipes = filteredRecipes.map(r => {
         const calc = calculateRecipeCost(r);
         return { ...r, ...calc };
-    }).filter(r => parseFloat(r.mealTotal) <= totalBudget); // Filter showing Affordable MEALS, but we display shopping cost
+    }).filter(r => parseFloat(r.mealTotal) <= totalBudget);
 
     if (currentAffordableRecipes.length === 0) {
         resultsArea.innerHTML = `
@@ -278,7 +285,6 @@ closeBasketBtn.addEventListener('click', () => {
     basketModal.style.display = 'none';
 });
 
-// Close modal on outside click
 window.onclick = function (event) {
     if (event.target == basketModal) {
         basketModal.style.display = "none";
